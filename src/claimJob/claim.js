@@ -29,7 +29,7 @@ prompt.get(properties, function (err, result) {
 
 const claim = async (password) => {
     const data = JSON.parse(readFileSync('./src/claimJob/bondToClaim.json'))
-    const provider = connectToProvider()
+    const provider = connectToProvider(password)
     const web3 = new Web3(provider)
     const [admin, _] = await web3.eth.getAccounts()
     for (const [bond, accountList] of Object.entries(data)){
