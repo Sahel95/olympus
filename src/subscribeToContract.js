@@ -3,7 +3,7 @@ const connectToProvider = require('./connector')
 const contracts = require('./constant/contracts')
 
 
-const subscribeToContract = (name, provider, poolType='') => {
+const subscribeToContract = (name, provider, web3 ,poolType='') => {
     let abi, address
     // const provider = connectToProvider()
 

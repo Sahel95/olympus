@@ -1,14 +1,14 @@
 const Web3 = require('web3')
 const HDWalletProvider = require('@truffle/hdwallet-provider')
-const {mnemonic} = require('./constants/myWallet')
+const {privateKey} = require('./constant/myWallet')
 
+const nodes = require('./constant/nodes.js')
 
-const url = 'https://speedy-nodes-nyc.moralis.io/ff2eb169801bccb4ea1cd0cb/eth/mainnet'
 
 const connectToProvider =  () => {
     const provider = new HDWalletProvider(
-        mnemonic,
-        url
+        privateKey,
+        nodes['moralis']
     )
     // console.log(provider);
 

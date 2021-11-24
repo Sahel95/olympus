@@ -1,15 +1,14 @@
-const connectToProvider = require('./connector')
 const subscribeToContract = require('./subscribeToContract')
-const contracts = require('./constants/contractsDetail')
+const contracts = require('./constant/contracts')
 const Tx = require('ethereumjs-tx').Transaction;
-const myWallet = require('./constants/myWallet')
+const myWallet = require('./constant/myWallet')
 const Web3 = require('web3')
-const ethereumjs_common = require ('ethereumjs-common').default;
+
+var crypto = require('crypto');
 
 
 
-const sendTransaction = async (admin, data, contractAddress, provider, value) => {
-    const web3 = new Web3(provider)
+const sendTransaction = async (admin, data, contractAddress, provider, web3, key='') => {
     var count = await web3.eth.getTransactionCount(admin)
     var gasPrice = await web3.eth.getGasPrice()
     var gasLimit = await web3.eth.estimateGas({
@@ -18,25 +17,22 @@ const sendTransaction = async (admin, data, contractAddress, provider, value) =>
         "to"        : contractAddress,     
         "data"      : data.encodeABI()
    })
-    var common = ethereumjs_common.forCustomChain (
-        'ropsten', { networkId: 43114, chainId: 43114, name: 'geth' },
-        'muirGlacier'
-      );
-
-
     var rawTx = {
         "from":admin,
         "gasPrice":web3.utils.toHex(gasPrice),
         "gasLimit":web3.utils.toHex(gasLimit),
         "to":contractAddress,
-        // "value":web3.utils.toHex(value),
         "data":data.encodeABI(),
         "nonce":web3.utils.toHex(count),
-        "chainId": web3.utils.toHex(43114)
+        "maxPriorityFeePerGas"  : web3.utils.toHex(web3.utils.toWei('1.5','gwei')),
+        "type": 0x2
     };
-    console.log('transaction::::::::::::::::::::::::::::',rawTx);
-    var tx = new Tx(rawTx, { "common": common }); //chain????
-    const privateKey = Buffer.from(myWallet['privateKey'], 'hex')
+    var tx = new Tx(rawTx, { "chain": "mainnet" });
+
+    var algorithm = 'aes256';
+    var decipher = crypto.createDecipher(algorithm, key);
+    var privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
+    privateKey = Buffer.from(privateKey, 'hex')
     tx.sign(privateKey);
     var serializedTx = tx.serialize();
     const result = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
@@ -51,25 +47,21 @@ const sendTransaction = async (admin, data, contractAddress, provider, value) =>
 }
 
 
-const redeem = async (ohmFork, bond, admin, receiptAddress ,provider, web3 ) => {
+const redeem = async (bond, admin, receiptAddress ,provider, web3, key ) => {
     console.log(':::::::::::::::::::::::redeem::::::::::::::::::');
-    const contractDetail = contracts[ohmFork]
-    const bondContract = await subscribeToContract(bond, provider, 'Bonds', ohmFork)
-    redeemData = await bondContract.methods.redeem(receiptAddress, true)
-    const redeemResult = await sendTransaction(admin, redeemData, contractDetail['Bonds'][bond]['address'],provider)
+    const bondContract = await subscribeToContract(bond, provider, web3, 'bonds')
+    redeemData = await bondContract.methods.redeem(receiptAddress)
+    const redeemResult = await sendTransaction(admin, redeemData, contracts['bonds'][bond]['address'],provider, web3, key)
     return redeemResult;
 }
 
 
 const pendingPayoutFor = async (ohmFork, bond, receiptAddress,provider ) => {
-    const bondContract = await subscribeToContract(bond, provider, 'Bonds', ohmFork)
+    const bondContract = await subscribeToContract(bond, provider, 'bonds')
     claimableRewards = await bondContract.methods.pendingPayoutFor(receiptAddress).call()
     return claimableRewards;
 }
 
-
-
-// redeem()
 
 module.exports = {
     redeem,
