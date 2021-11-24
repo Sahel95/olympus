@@ -7,5 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.7.0",
+    "ethereumjs-tx": "^2.1.2",
+    "node-fetch": "^3.1.0",
+    "nodemon": "^2.0.15",
+    "web3": "^1.6.1"
+  }
 }
