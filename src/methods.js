@@ -10,7 +10,6 @@ var crypto = require('crypto');
 
 const sendTransaction = async (admin, data, contractAddress, provider, web3, key='') => {
     var count = await web3.eth.getTransactionCount(admin)
-    var gasPrice = await web3.eth.getGasPrice()
     var gasLimit = await web3.eth.estimateGas({
         "from"      : admin,       
         "nonce"     : web3.utils.toHex(count), 
@@ -19,7 +18,6 @@ const sendTransaction = async (admin, data, contractAddress, provider, web3, key
    })
     var rawTx = {
         "from":admin,
-        "gasPrice":web3.utils.toHex(gasPrice),
         "gasLimit":web3.utils.toHex(gasLimit),
         "to":contractAddress,
         "data":data.encodeABI(),
@@ -35,7 +33,7 @@ const sendTransaction = async (admin, data, contractAddress, provider, web3, key
     privateKey = Buffer.from(privateKey, 'hex')
     tx.sign(privateKey);
     var serializedTx = tx.serialize();
-    const result = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+    const result = await web3.eth.ham('0x' + serializedTx.toString('hex'))
     .on('transactionHash', (hash) => {
         console.log('transactionHash', hash);
     })
