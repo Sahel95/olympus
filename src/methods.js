@@ -8,7 +8,7 @@ var crypto = require('crypto');
 
 
 
-const sendTransaction = async (admin, data, contractAddress, provider, web3, key='') => {
+const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
     var count = await web3.eth.getTransactionCount(admin)
     var gasLimit = await web3.eth.estimateGas({
         "from"      : admin,       
@@ -33,7 +33,7 @@ const sendTransaction = async (admin, data, contractAddress, provider, web3, key
     privateKey = Buffer.from(privateKey, 'hex')
     tx.sign(privateKey);
     var serializedTx = tx.serialize();
-    const result = await web3.eth.ham('0x' + serializedTx.toString('hex'))
+    const result = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
     .on('transactionHash', (hash) => {
         console.log('transactionHash', hash);
     })
@@ -49,12 +49,12 @@ const redeem = async (bond, admin, receiptAddress ,provider, web3, key ) => {
     console.log(':::::::::::::::::::::::redeem::::::::::::::::::');
     const bondContract = await subscribeToContract(bond, provider, web3, 'bonds')
     redeemData = await bondContract.methods.redeem(receiptAddress)
-    const redeemResult = await sendTransaction(admin, redeemData, contracts['bonds'][bond]['address'],provider, web3, key)
+    const redeemResult = await sendTransaction(admin, redeemData, contracts['bonds'][bond]['address'], web3, key)
     return redeemResult;
 }
 
 
-const pendingPayoutFor = async (ohmFork, bond, receiptAddress,provider ) => {
+const pendingPayoutFor = async (bond, receiptAddress,provider ) => {
     const bondContract = await subscribeToContract(bond, provider, 'bonds')
     claimableRewards = await bondContract.methods.pendingPayoutFor(receiptAddress).call()
     return claimableRewards;

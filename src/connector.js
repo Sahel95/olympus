@@ -15,6 +15,7 @@ const connectToProvider =  (key) => {
     const provider = new HDWalletProvider(
         privateKey,
         nodes['moralis']
+        // nodes['infura']
     )
     // console.log(provider);
 
