@@ -53,7 +53,6 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
     privateKey = Buffer.from(privateKey, 'hex')
     tx.sign(privateKey);
     var serializedTx = tx.serialize();
-    return '2'
     const result = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
     .on('transactionHash', (hash) => {
         console.log('transactionHash', hash);
