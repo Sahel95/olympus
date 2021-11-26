@@ -13,6 +13,7 @@ const crypto = require('crypto');
 
 
 const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
+    console.log('start to create tx');
     var count = await web3.eth.getTransactionCount(admin)
     var gasLimit = await web3.eth.estimateGas({
         "from"      : admin,       
@@ -20,10 +21,12 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
         "to"        : contractAddress,     
         "data"      : data.encodeABI()
    })
+   console.log('gasLimit', gasLimit);
    var block = await web3.eth.getBlock('latest')
+   console.log('block', block);
    var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
    var maxFeePerGas = (2 * block.baseFeePerGas) + Number(maxPriorityFeePerGas)
-
+   console.log('til');
     var rawTx = {
         "from":admin,
         "gasLimit":web3.utils.toHex(gasLimit),
@@ -63,6 +66,7 @@ const redeem = async (bond, admin, receiptAddress , web3, key ) => {
     console.log(`redeem bond ${bond} for account ${receiptAddress}`);
     const bondContract = await subscribeToContract(bond, web3, 'bonds')
     redeemData = await bondContract.methods.redeem(receiptAddress)
+    console.log('redeem DATA done');
     const redeemResult = await sendTransaction(admin, redeemData, contracts['bonds'][bond]['address'], web3, key)
     return redeemResult;
 }
