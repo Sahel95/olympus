@@ -62,13 +62,13 @@ const bondDiscount = async () => {
             var inputData = abiDecoder.decodeMethod(tx['input']);
             
             if(inputData.name === 'deposit'){
-                console.log(tx);
+                // console.log(tx);
                 var obj={}
                 obj['bond'] = bond
                 obj['blockNumber'] = tx['blockNumber']
                 obj['contract'] = tx['to']
                 obj['amount'] = inputData.params[0]['value']/Math.pow(10,18)
-                console.log(obj);
+                // console.log(obj);
 
                 lpContract = subscribeToContract(bondsPair[bond], web3)
                 var reserves = await lpContract.methods.getReserves().call(undefined, tx['blockNumber'])
@@ -76,18 +76,40 @@ const bondDiscount = async () => {
                 var totalSupply = await lpContract.methods.totalSupply().call(undefined, tx['blockNumber'])
                 var value = reserve1/totalSupply
 
-                const bondContract = subscribeToContract(bond, web3, 'bonds')
-                var nextBlock = tx['blockNumber']+1
-                console.log(nextBlock);
-                var bondDetails = await bondContract.methods.bondInfo(address).call(undefined, 136520951)
-                var pending = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
+                const txReceipt = await web3.eth.getTransactionReceipt(tx.hash)
+                const logs = txReceipt.logs
+                const tokensTransferred = []
 
-                console.log(pending);
+                for await (const [index,log] of logs.entries()){
+                    if (log.address.toUpperCase()  === contracts['tokens'][bond]['address'].toUpperCase() ){
+                        console.log(log.logIndex);
+                        var hex = log.data
+                        tokensTransferred.push(hex)
+                        // var value = web3.utils.hexToNumber(hex)
+                    }
+                    
+                }
+                console.log(tokensTransferred);
+
+                // var reward = tokensTransferred[0] - tokensTransferred[1]
                 // var discount = 1-(reward/(value*obj['amount']*2))
+                // obj['discount'] = discount
+                // data.push(obj)
+
+
+                // console.log(test.logs[0]['topics'])
+                // console.log(test.logs)
+                // const bondContract = subscribeToContract(bond, web3, 'bonds')
+                // var nextBlock = tx['blockNumber']+1
+                // console.log(nextBlock);
+                // var bondDetails = await bondContract.methods.bondInfo(address).call(undefined, 136520951)
+                // var pending = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
+                // console.log(pending);
+
+                
 
 
 
-                data.push(obj)
             }
         }}
 }
