@@ -36,7 +36,7 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
         "to":contractAddress,
         "data":data.encodeABI(),
         "nonce":web3.utils.toHex(count),
-        "maxFeePerGas": web3.utils.toHex(maxFeePerGas),
+        "maxFeePerGas": web3.utils.toHex(web3.utils.toWei('1.5','gwei')),
         "maxPriorityFeePerGas"  :  web3.utils.toHex(maxPriorityFeePerGas),
         "type": 0x2,
         "accessList": []
@@ -53,6 +53,7 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
     privateKey = Buffer.from(privateKey, 'hex')
     tx.sign(privateKey);
     var serializedTx = tx.serialize();
+    return '2'
     const result = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
     .on('transactionHash', (hash) => {
         console.log('transactionHash', hash);
