@@ -21,12 +21,15 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
         "to"        : contractAddress,     
         "data"      : data.encodeABI()
    })
+   console.log('count', count);
    console.log('gasLimit', gasLimit);
    var block = await web3.eth.getBlock('latest')
    console.log('block', block);
    var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
    var maxFeePerGas = (2 * block.baseFeePerGas) + Number(maxPriorityFeePerGas)
-   console.log('til');
+   console.log('maxPriorityFeePerGas',maxPriorityFeePerGas);
+   console.log('maxFeePerGas', maxFeePerGas);
+   console.log('admin', admin);
     var rawTx = {
         "from":admin,
         "gasLimit":web3.utils.toHex(gasLimit),
