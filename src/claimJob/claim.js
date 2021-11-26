@@ -31,11 +31,11 @@ const claim = async (password) => {
     const data = JSON.parse(readFileSync('./src/claimJob/bondsToClaim.json'))
     const provider = connectToProvider(password)
     const web3 = new Web3(provider)
-    const [admin, _] = await web3.eth.getAccounts()
+    const [sender, _] = await web3.eth.getAccounts()
     for (const [bond, accountList] of Object.entries(data)){
         for (const item of accountList){
             var receiptAddress = accounts[item]
-            await redeem (bond, admin, receiptAddress , web3 , password)
+            await redeem (bond, sender, receiptAddress , web3 , password)
             console.log('done');
         }
     }
