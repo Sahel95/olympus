@@ -8,8 +8,12 @@ const contracts = {
         // address : '',
         // abi: JSON.parse(readFileSync( abiPath + '.json'))
     },
+    UniswapEthFoxLP: {
+        address: '0x470e8de2eBaef52014A47Cb5E6aF86884947F08c',
+        abi: JSON.parse(readFileSync( abiPath + 'UniswapEthFoxLP.json'))
+    },
     bonds : {
-        std: {
+        sdt: {
             address : '0x903dE5B04B9878696FfA08bD300Cc06b260fc5C9',
             abi: JSON.parse(readFileSync(bondsPath + 'StdEth.json'))
         },
@@ -18,7 +22,7 @@ const contracts = {
             abi: JSON.parse(readFileSync(bondsPath + 'angle.json'))
         },
         bond: {
-            address : '0x903dE5B04B9878696FfA08bD300Cc06b260fc5C9',
+            address : '0x4dF87BA9eBD148E09117d9b82461b87091365E2c',
             abi: JSON.parse(readFileSync(bondsPath + 'bond.json'))
         },
         rook: {
@@ -35,7 +39,7 @@ const contracts = {
         },
         fox: {
             address : '0x270689EEEFAc9015EA8eA3C1c082F91af2a7f77c',
-            abi: JSON.parse(readFileSync(bondsPath + 'fox.json'))
+            abi: JSON.parse(readFileSync(bondsPath + 'fox.json')),
         },
         syn: {
             address : '0x89c4993E8A96E70BB507b31B38Fd6ADdf995394C',
@@ -51,7 +55,7 @@ const contracts = {
         },
     },
     tokens: {
-        std  : {  
+        sdt  : {  
             address : '0x4dF87BA9eBD148E09117d9b82461b87091365E2c',
             abi: JSON.parse(readFileSync(tokensPath + 'Std.json'))
         },

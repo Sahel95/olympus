@@ -4,7 +4,11 @@ const Tx = require('ethereumjs-tx').Transaction;
 const myWallet = require('./constant/myWallet')
 const Web3 = require('web3')
 
-var crypto = require('crypto');
+const { FeeMarketEIP1559Transaction } = require( '@ethereumjs/tx' );
+const Common = require( '@ethereumjs/common' ).default;
+
+
+const crypto = require('crypto');
 
 
 
@@ -16,16 +20,26 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
         "to"        : contractAddress,     
         "data"      : data.encodeABI()
    })
+   var block = await web3.eth.getBlock('latest')
+   var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
+   var maxFeePerGas = (2 * block.baseFeePerGas) + Number(maxPriorityFeePerGas)
+
     var rawTx = {
         "from":admin,
         "gasLimit":web3.utils.toHex(gasLimit),
         "to":contractAddress,
         "data":data.encodeABI(),
         "nonce":web3.utils.toHex(count),
-        "maxPriorityFeePerGas"  : web3.utils.toHex(web3.utils.toWei('1.5','gwei')),
-        "type": 0x2
+        "maxFeePerGas": web3.utils.toHex(maxFeePerGas),
+        "maxPriorityFeePerGas"  :  web3.utils.toHex(maxPriorityFeePerGas),
+        "type": 0x2,
+        "accessList": []
     };
-    var tx = new Tx(rawTx, { "chain": "mainnet" });
+    console.log(rawTx);
+    var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
+    // var tx = new Tx(rawTx, { "chain": "mainnet" });
+    var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx , { chain } );
+    console.log(tx);
 
     var algorithm = 'aes256';
     var decipher = crypto.createDecipher(algorithm, key);
@@ -45,17 +59,17 @@ const sendTransaction = async (admin, data, contractAddress, web3, key='') => {
 }
 
 
-const redeem = async (bond, admin, receiptAddress ,provider, web3, key ) => {
-    console.log(':::::::::::::::::::::::redeem::::::::::::::::::');
-    const bondContract = await subscribeToContract(bond, provider, web3, 'bonds')
+const redeem = async (bond, admin, receiptAddress , web3, key ) => {
+    console.log(`redeem bond ${bond} for account ${receiptAddress}`);
+    const bondContract = await subscribeToContract(bond, web3, 'bonds')
     redeemData = await bondContract.methods.redeem(receiptAddress)
     const redeemResult = await sendTransaction(admin, redeemData, contracts['bonds'][bond]['address'], web3, key)
     return redeemResult;
 }
 
 
-const pendingPayoutFor = async (bond, receiptAddress,provider ) => {
-    const bondContract = await subscribeToContract(bond, provider, 'bonds')
+const pendingPayoutFor = async (bond, receiptAddress,web3 ) => {
+    const bondContract = await subscribeToContract(bond, web3, 'bonds')
     claimableRewards = await bondContract.methods.pendingPayoutFor(receiptAddress).call()
     return claimableRewards;
 }
