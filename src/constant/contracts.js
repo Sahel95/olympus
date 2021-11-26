@@ -2,15 +2,48 @@ const {readFileSync} = require('fs')
 const abiPath = './src/constant/abi/'
 const bondsPath = './src/constant/abi/bonds/'
 const tokensPath = './src/constant/abi/tokens/'
+const lpPath = './src/constant/abi/lp/'
 
 const contracts = {
     sample  : {  
-        // address : '',
+        address : '',
         // abi: JSON.parse(readFileSync( abiPath + '.json'))
     },
     UniswapEthFoxLP: {
         address: '0x470e8de2eBaef52014A47Cb5E6aF86884947F08c',
-        abi: JSON.parse(readFileSync( abiPath + 'UniswapEthFoxLP.json'))
+        abi: JSON.parse(readFileSync( lpPath + 'UniswapEthFoxLP.json'))
+    },
+    SushiSwapStdWethLP :{
+        address: '0x22DEF8cF4E481417cb014D9dc64975BA12E3a184',
+        abi: JSON.parse(readFileSync( lpPath + 'SushiSwapStdWethLP.json'))
+    },
+    SushiSwapAngleAgeurLP  : {  
+        address : '0x1f4c763bde1d4832b3ea0640e66da00b98831355',
+        abi: JSON.parse(readFileSync( lpPath + 'SushiSwapAngleAgeur.json'))
+    },
+    UniswapBondUsdcLP  : {  
+        address : '0x6591c4bcd6d7a1eb4e537da8b78676c1576ba244',
+        abi: JSON.parse(readFileSync( lpPath + 'UniswapBondUsdcLP.json'))
+    },
+    UniswapRookWethLP  : {  
+        address : '0x70ec2fA6Eccf4010eaf572d1C1a7bCbC72DEC983',
+        abi: JSON.parse(readFileSync( lpPath + 'UniswapRookWethLP.json'))
+    },
+    UniswapPoolEthLP  : {  
+        address : '0x85Cb0baB616Fe88a89A35080516a8928F38B518b',
+        abi: JSON.parse(readFileSync( lpPath + 'UniswapPoolEthLP.json'))
+    },
+    SushiSwapXruneWethLP  : {  
+        address : '0x95cFa1f48faD82232772d3B1415Ad4393517F3b5',
+        abi: JSON.parse(readFileSync( lpPath + 'SushiSwapXruneWethLP.json'))
+    },
+    SushiSwapSynEthLP  : {  
+        address : '0x4a86c01d67965f8cb3d0aaa2c655705e64097c31',
+        abi: JSON.parse(readFileSync( lpPath + 'SushiSwapSynEthLP.json'))
+    },
+    SushiSwapPremiaWethLP  : {  
+        address : '0x93E2F3a8277E0360081547D711446e4a1F83546D',
+        abi: JSON.parse(readFileSync( lpPath + 'SushiSwapPremiaWethLP.json'))
     },
     bonds : {
         sdt: {
