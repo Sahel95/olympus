@@ -86,6 +86,10 @@ const contracts = {
             address : '0xA8E5Fa0072D292646d49999ef0d7f9354ec8e7a5',
             abi: JSON.parse(readFileSync(bondsPath + 'mta.json'))
         },
+        inv: {
+            address: '0x34eB308C932fe3BbdA8716a1774eF01d302759D9',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        }
     },
     tokens: {
         sdt  : {  
@@ -128,6 +132,14 @@ const contracts = {
             address : '0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2',
             abi: JSON.parse(readFileSync(tokensPath + 'mta.json'))
         },
+        usd: {
+            address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            abi: JSON.parse(readFileSync(tokensPath + 'usd.json'))
+        },
+        inv: {
+            address: '0x41d5d79431a913c4ae7d69a668ecdfe5ff9dfb68',
+            abi: JSON.parse(readFileSync(tokensPath + 'inv.json'))
+        }
     }
 }
 

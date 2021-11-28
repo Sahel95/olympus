@@ -7,8 +7,8 @@ const bondsPair = {
     pool: 'UniswapPoolEthLP',
     xrune: 'SushiSwapXruneWethLP',
     syn: 'SushiSwapSynEthLP',
-    premia: ' SushiSwapPremiaWethLP',
-    mta: ''
+    premia: 'SushiSwapPremiaWethLP',
+    // mta: ''
 }
 
 module.exports = bondsPair
