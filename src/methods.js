@@ -25,14 +25,6 @@ const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
    var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
    var maxFeePerGas = (2 * block.baseFeePerGas) + Number(maxPriorityFeePerGas)
 
-   console.log('count', count);
-   console.log('gasLimit', gasLimit);
-   console.log('block', block);
-   console.log('maxPriorityFeePerGas',maxPriorityFeePerGas);
-   console.log('maxFeePerGas', maxFeePerGas);
-   console.log('sender', sender);
-
-
     var rawTx = {
         "from":sender,
         "gasLimit":web3.utils.toHex(gasLimit),
@@ -45,7 +37,6 @@ const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
         // "chainId": "0x03" 
     };
 
-    console.log(count);
 
     var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
     var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx );
