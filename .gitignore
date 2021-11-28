@@ -1,5 +1,6 @@
 src/constant/myWallet.js
 temp
+src/claimJob/bondsToClaim.json
 
 # Logs
 logs

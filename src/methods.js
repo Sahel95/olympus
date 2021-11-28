@@ -39,15 +39,16 @@ const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
         "to":contractAddress,
         "data":data.encodeABI(),
         "nonce":web3.utils.toHex(count),
-        // "maxFeePerGas": web3.utils.toHex(web3.utils.toWei('1.5','gwei')), // test ***********
         "maxFeePerGas": web3.utils.toHex(maxFeePerGas),
         "maxPriorityFeePerGas"  :  web3.utils.toHex(maxPriorityFeePerGas),
         "type": "0x02",
-        "chainId": "0x01" //ropsten "0x03"
+        // "chainId": "0x03" 
     };
 
+    console.log(count);
+
     var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
-    var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx , {chain} );
+    var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx );
 
     var algorithm = 'aes256';
     var decipher = crypto.createDecipher(algorithm, key);
@@ -55,7 +56,6 @@ const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
     privateKey = Buffer.from(privateKey, 'hex')
 
     const signedTransaction = tx.sign(privateKey);
-    // return 'test'
     const result = await web3.eth.sendSignedTransaction( '0x' + signedTransaction.serialize().toString( 'hex' ) )    .on('transactionHash', (hash) => {
         console.log('transactionHash', hash);
     })
