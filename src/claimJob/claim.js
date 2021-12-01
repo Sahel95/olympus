@@ -82,7 +82,7 @@ const checkBalance = async (data, web3, sender, count,inputBaseFeePerGas) => {
     console.log('baseFeePerGas',baseFeePerGas);
 
 
-    var maxFeePerGas = (1 * baseFeePerGas) + Number(maxPriorityFeePerGas)
+    var maxFeePerGas = baseFeePerGas + Number(maxPriorityFeePerGas)
     var estimate = gasLimit * maxFeePerGas * Number(transactionNum)
 
     var balance = await web3.eth.getBalance(sender);
