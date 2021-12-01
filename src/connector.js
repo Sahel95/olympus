@@ -1,10 +1,8 @@
 const Web3 = require('web3')
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 const myWallet = require('./constant/myWallet')
-
 const url = require('./constant/nodes.js')
 var crypto = require('crypto');
-
 
 
 const connectToProvider =  (key='') => {

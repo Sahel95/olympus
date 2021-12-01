@@ -11,18 +11,35 @@ const Tx = require('ethereumjs-tx').Transaction;
 const crypto = require('crypto');
 
 
+// const estimateGas = async (sender, data, contractAddress, count, web3) => {
 
-const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
-    console.log('start to create tx');
-    var count = await web3.eth.getTransactionCount(sender)
+//    var result  = {
+//     gasLimit:gasLimit,
+//     maxPriorityFeePerGas:maxPriorityFeePerGas,
+//     maxFeePerGas:maxFeePerGas
+//    }
+//    return result
+// }
+
+
+const sendTransaction = async (sender, data, contractAddress, web3,bond='', count='', maxpriority='',privateKey) => {
+    if (count === ''){
+        var count = await web3.eth.getTransactionCount(sender)
+    }
+    if (maxpriority ===''){
+        var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
+    }else {
+        var maxPriorityFeePerGas = web3.utils.toWei(maxpriority.toString(),'gwei')
+    }
     var gasLimit = await web3.eth.estimateGas({
         "from"      : sender,       
         "nonce"     : web3.utils.toHex(count), 
         "to"        : contractAddress,     
         "data"      : data.encodeABI()
    })
+
+   gasLimit = Math.ceil(gasLimit * 1.05)
    var block = await web3.eth.getBlock('latest')
-   var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
    var maxFeePerGas = (2 * block.baseFeePerGas) + Number(maxPriorityFeePerGas)
 
     var rawTx = {
@@ -36,34 +53,29 @@ const sendTransaction = async (sender, data, contractAddress, web3, key='') => {
         "type": "0x02",
         // "chainId": "0x03" 
     };
-
-
-    var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
+    // var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
     var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx );
-
-    var algorithm = 'aes256';
-    var decipher = crypto.createDecipher(algorithm, key);
-    var privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
-    privateKey = Buffer.from(privateKey, 'hex')
-
     const signedTransaction = tx.sign(privateKey);
-    const result = await web3.eth.sendSignedTransaction( '0x' + signedTransaction.serialize().toString( 'hex' ) )    .on('transactionHash', (hash) => {
-        console.log('transactionHash', hash);
+    return '2'
+    web3.eth.sendSignedTransaction( '0x' + signedTransaction.serialize().toString( 'hex' ) )    
+    .on('transactionHash', (hash) => {
+        console.log(`${bond} transaction hash`, hash);
+        return
     })
     .on('receipt', (receipt) => {
-        console.log('receipt', receipt);
+        console.log(`${bond} receipt`, receipt);
     })
-    .on('error', console.error);
-    return result
+    .on('error', (error) => {
+        console.log(`${bond} error`, console.log(error));
+    })
+    
 }
 
 
-const redeem = async (bond, sender, receiptAddress , web3, key ) => {
-    console.log(`redeem bond ${bond} for account ${receiptAddress}`);
+const redeem = async (bond, sender, receiptAddress , web3, privateKey='', count='', maxpriority='' ) => {
     const bondContract = await subscribeToContract(bond, web3, 'bonds')
     redeemData = await bondContract.methods.redeem(receiptAddress)
-    console.log('redeem DATA done');
-    const redeemResult = await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, key)
+    const redeemResult = await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, count, maxpriority, privateKey)
     return redeemResult;
 }
 
