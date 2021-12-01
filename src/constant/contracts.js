@@ -100,6 +100,10 @@ const contracts = {
         }
     },
     tokens: {
+        weth:{
+            address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+            abi: JSON.parse(readFileSync(tokensPath + 'weth.json'))
+        },
         sdt  : {  
             address : '0xac14864ce5a98af3248ffbf549441b04421247d3',
             abi: JSON.parse(readFileSync(tokensPath + 'Std.json'))

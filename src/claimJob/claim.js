@@ -23,18 +23,17 @@ const properties = [
         name: 'password',
         hidden: true
     }
-]
+];
 
+prompt.start();
 
-// prompt.start();
-
-// prompt.get(properties, function (err, result) {
-//     if (err) { 
-//         console.log(err);
-//         return 1;
-//      }
-//     job(result.password)
-// });
+prompt.get(properties, function (err, result) {
+    if (err) {
+        console.log(err);
+        return 1;
+     }
+    job(result.password)
+});
 
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -120,12 +119,12 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
             console.log(`account ${item} : ${bond}`);
             var receiptAddress = accounts[item]
             console.log('12');
-            var [claimableUsd,claimable,total] = await checkClaimable(bond,receiptAddress, web3)
-            console.log(claimableUsd[1]/Math.pow(10, 6), claimable,total);
+            // var [claimableUsd,claimable,total] = await checkClaimable(bond,receiptAddress, web3)
+            // console.log(claimableUsd[1]/Math.pow(10, 6), claimable,total);
             var checkClaimableResult = true
-            if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
-                checkClaimableResult = false
-            }
+            // if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
+            //     checkClaimableResult = false
+            // }
 
             if (checkClaimableResult || force){
                 console.log(`account ${item} : start to claim ${bond}`);
@@ -141,7 +140,8 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
 }
 
 
-const job = async (key='za1wiephiepie7xeiwoH3kiek') => {
+const job = async (key) => {
+    
     const {lowgas: inputBaseFeePerGas, maxpriority} = commandLineArgs(optionDefinitions)
     // { force: true, maxpriority: 3, lowgas: 2 }
 
@@ -152,6 +152,7 @@ const job = async (key='za1wiephiepie7xeiwoH3kiek') => {
     const web3 = new Web3(provider)
     const [sender, _] = await web3.eth.getAccounts()
     const count = await web3.eth.getTransactionCount(sender)
+
 
     var algorithm = 'aes256';
     var decipher = crypto.createDecipher(algorithm, key);
@@ -179,6 +180,6 @@ const job = async (key='za1wiephiepie7xeiwoH3kiek') => {
     } 
 }
 
-job()
+// job()
 
 
