@@ -117,6 +117,7 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
     let nonce = count
     for (const [bond, accountList] of Object.entries(data)){
         for (const item of accountList){
+            console.log(`account ${item} : ${bond}`);
             var receiptAddress = accounts[item]
             console.log('12');
             var [claimableUsd,claimable,total] = await checkClaimable(bond,receiptAddress, web3)
@@ -127,7 +128,7 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
             }
 
             if (checkClaimableResult || force){
-                console.log(`account ${item} : start ${bond}`);
+                console.log(`account ${item} : start to claim ${bond}`);
                 await redeem (bond, sender, receiptAddress , web3 , privateKey, nonce, maxpriority)
                 nonce ++
                 console.log(`account ${item} : ${bond} redeemed`);
