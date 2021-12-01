@@ -101,7 +101,7 @@ const contracts = {
     },
     tokens: {
         sdt  : {  
-            address : '0x4dF87BA9eBD148E09117d9b82461b87091365E2c',
+            address : '0xac14864ce5a98af3248ffbf549441b04421247d3',
             abi: JSON.parse(readFileSync(tokensPath + 'Std.json'))
         },
         angle: {
