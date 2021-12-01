@@ -105,14 +105,11 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
     const bondContract = await subscribeToContract(bond, web3, 'bonds')
     const claimable = await bondContract.methods.pendingPayoutFor(receiptAddress).call()
     console.log('13',claimable);
-    // const claimable = web3.utils.toWei('0.01', 'ether')
+    
     const bondDetails = await bondContract.methods.bondInfo(receiptAddress).call()
     const total = Number(bondDetails.payout.toString())
     console.log('14', total);
     
-    const route = [contracts['tokens'][bond]['address'],contracts['tokens']['usd']['address']]
-
-    console.log('15', route);
     var fromTokenAddress = contracts['tokens'][bond]['address']
     if (bond === 'xsdt'){
         var fromTokenAddress = contracts['tokens']['sdt']['address']
@@ -126,14 +123,13 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
     }
 
     const body = await response.json()
-    console.log(body);
 
     var claimableUsd = body.toTokenAmount
     if (bond === 'xsdt'){
         claimableUsd = 1.17 * claimableUsd
     }
 
-    console.log(claimableUsd, claimable/total);
+    console.log('claimableUsd',claimableUsd);
 
     if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
         return false
