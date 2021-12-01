@@ -1,6 +1,7 @@
 const Web3 = require('web3')
 const {readFileSync} = require('fs')
 const commandLineArgs = require('command-line-args')
+const fetch = require('node-fetch');
 const prompt = require('prompt');
 const crypto = require('crypto');
 
@@ -91,6 +92,23 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
 
     console.log('15', route);
 
+    const url = `https://api.1inch.exchange/v3.0/1/quote?fromTokenAddress=${contracts['tokens'][bond]['address']}&toTokenAddress=${contracts['tokens']['usd']['address']}&amount=${claimable}`
+    try {
+        response = await fetch(url)
+    } catch (error) {
+        response = await fetch(url)  
+    }
+    const body = await response.json()
+    console.log(body);
+    const claimableUsd = body.toTokenAmount
+    console.log(claimableUsd, claimable/total);
+
+    if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
+        return false
+    } else {
+        return true
+    }
+
     // TODO
     try {
         console.log('16');
@@ -106,6 +124,8 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
         console.log('19', claimableUsd[1]);
         return [claimableUsd,claimable,total]
     }
+
+
 }
 
 
@@ -119,22 +139,24 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
             console.log(`account ${item} : ${bond}`);
             var receiptAddress = accounts[item]
             console.log('12');
-            // var [claimableUsd,claimable,total] = await checkClaimable(bond,receiptAddress, web3)
-            // console.log(claimableUsd[1]/Math.pow(10, 6), claimable,total);
-            var checkClaimableResult = true
-            // if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
-            //     checkClaimableResult = false
-            // }
 
-            if (checkClaimableResult || force){
+            if(force){
                 console.log(`account ${item} : start to claim ${bond}`);
                 await redeem (bond, sender, receiptAddress , web3 , privateKey, nonce, maxpriority)
                 nonce ++
                 console.log(`account ${item} : ${bond} redeemed`);
             } else {
-                console.log(`account ${item} : claimable ${bond} is not enough`);
-            }
-        }
+                var checkClaimableResult = await checkClaimable(bond,receiptAddress, web3)
+                if(checkClaimableResult){
+                    console.log(`account ${item} : start to claim ${bond}`);
+                    await redeem (bond, sender, receiptAddress , web3 , privateKey, nonce, maxpriority)
+                    nonce ++
+                    console.log(`account ${item} : ${bond} redeemed`);
+                } else {
+                    console.log(`account ${item} : claimable ${bond} is not enough`);
+                }
+            }}
+
     }
     process.exit(1)
 }
@@ -164,7 +186,8 @@ const job = async (key) => {
             var block = await web3.eth.getBlock('latest')
             var baseFeePerGas = block.baseFeePerGas
             console.log('3',baseFeePerGas);
-            if(inputBaseFeePerGas >= baseFeePerGas ){
+            console.log(inputBaseFeePerGas * Math.pow(10,9));
+            if(inputBaseFeePerGas * Math.pow(10,9) >= baseFeePerGas ){
                 console.log('4');
                 await checkBalance(data, web3, sender, count, maxpriority)
                 await claim(sender, web3 , data, count, privateKey )

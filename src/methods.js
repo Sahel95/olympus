@@ -56,7 +56,6 @@ const sendTransaction = async (sender, data, contractAddress, web3,bond='', coun
     // var chain = new Common( { chain : 'mainnet', hardfork : 'london' } );
     var tx = FeeMarketEIP1559Transaction.fromTxData( rawTx );
     const signedTransaction = tx.sign(privateKey);
-    // return 2
     web3.eth.sendSignedTransaction( '0x' + signedTransaction.serialize().toString( 'hex' ) )    
     .on('transactionHash', (hash) => {
         console.log(`${bond} transaction hash`, hash);
