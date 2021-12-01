@@ -1,6 +1,6 @@
 const bondsPair = {
     fox: 'UniswapEthFoxLP',
-    sdt : 'SushiSwapStdWethLP',
+    xsdt : 'SushiSwapStdWethLP',
     angle : 'SushiSwapAngleAgeurLP',
     bond : 'UniswapBondUsdcLP',
     rook: 'UniswapRookWethLP',

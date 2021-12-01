@@ -1,6 +1,6 @@
 
 const contractsName = {
-    '0x903de5b04b9878696ffa08bd300cc06b260fc5c9': 'sdt',
+    '0x903de5b04b9878696ffa08bd300cc06b260fc5c9': 'xsdt',
     '0x9e5dbd96fd433d89612f84e4eed4cd61a6c50277': 'angle',
     '0x4df87ba9ebd148e09117d9b82461b87091365e2c': 'bond',
     '0x21683a6ea8fe834ebefc03621aaff5fd362e9299': 'rook',

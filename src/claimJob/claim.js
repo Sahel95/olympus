@@ -6,7 +6,7 @@ const prompt = require('prompt');
 const crypto = require('crypto');
 
 const connectToProvider = require('../connector')
-const {redeem} = require('../methods')
+const {redeem, sendTransaction} = require('../methods')
 const subscribeToContract = require('../subscribeToContract')
 
 const myWallet = require('../constant/myWallet')
@@ -40,7 +40,8 @@ prompt.get(properties, function (err, result) {
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
-const checkBalance = async (data, web3, sender, count, maxpriority) => {
+const checkBalance = async (data, web3, sender, count) => {
+    const {maxpriority} = commandLineArgs(optionDefinitions)
     console.log('7');
     var transactionNum = Object.keys(data).length
     var firstBond =  Object.keys(data)[0]
@@ -91,16 +92,26 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
     const route = [contracts['tokens'][bond]['address'],contracts['tokens']['usd']['address']]
 
     console.log('15', route);
+    var fromTokenAddress = contracts['tokens'][bond]['address']
+    if (bond === 'xsdt'){
+        var fromTokenAddress = contracts['tokens']['sdt']['address']
+    }
 
-    const url = `https://api.1inch.exchange/v3.0/1/quote?fromTokenAddress=${contracts['tokens'][bond]['address']}&toTokenAddress=${contracts['tokens']['usd']['address']}&amount=${claimable}`
+    const url = `https://api.1inch.exchange/v3.0/1/quote?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${contracts['tokens']['usd']['address']}&amount=${claimable}`
     try {
         response = await fetch(url)
     } catch (error) {
         response = await fetch(url)  
     }
+
     const body = await response.json()
     console.log(body);
-    const claimableUsd = body.toTokenAmount
+
+    var claimableUsd = body.toTokenAmount
+    if (bond === 'xsdt'){
+        claimableUsd = 1.17 * claimableUsd
+    }
+
     console.log(claimableUsd, claimable/total);
 
     if(claimable/total < 0.25 && claimableUsd[1]/Math.pow(10, 6) < 2000){
@@ -109,28 +120,27 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
         return true
     }
 
-    // TODO
-    try {
-        console.log('16');
-        const uniswapRouterContract = await subscribeToContract('UniswapRouter', web3)
-        const claimableUsd = await uniswapRouterContract.methods.getAmountsOut(claimable, route).call()
-        console.log('17', claimableUsd[1]);
-        return [claimableUsd,claimable,total]
+    // try {
+    //     console.log('16');
+    //     const uniswapRouterContract = await subscribeToContract('UniswapRouter', web3)
+    //     const claimableUsd = await uniswapRouterContract.methods.getAmountsOut(claimable, route).call()
+    //     console.log('17', claimableUsd[1]);
+    //     return [claimableUsd,claimable,total]
 
-    } catch (error) {
-        console.log('18');
-        const sushiswapRouterContract = await subscribeToContract('SushiswapRouter', web3)
-        const claimableUsd = await sushiswapRouterContract.methods.getAmountsOut(claimable, route).call()
-        console.log('19', claimableUsd[1]);
-        return [claimableUsd,claimable,total]
-    }
+    // } catch (error) {
+    //     console.log('18');
+    //     const sushiswapRouterContract = await subscribeToContract('SushiswapRouter', web3)
+    //     const claimableUsd = await sushiswapRouterContract.methods.getAmountsOut(claimable, route).call()
+    //     console.log('19', claimableUsd[1]);
+    //     return [claimableUsd,claimable,total]
+    // }
 
 
 }
 
 
 const claim = async (sender, web3 ,data, count, privateKey  ) => {
-    const {maxpriority, force} = commandLineArgs(optionDefinitions)
+    const {lowgas: inputBaseFeePerGas, force, maxpriority} = commandLineArgs(optionDefinitions)
     console.log('10', maxpriority);
     console.log('11', force);
     let nonce = count
@@ -140,16 +150,19 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
             var receiptAddress = accounts[item]
             console.log('12');
 
+            const bondContract = await subscribeToContract(bond, web3, 'bonds')
+            redeemData = await bondContract.methods.redeem(receiptAddress)
+
             if(force){
                 console.log(`account ${item} : start to claim ${bond}`);
-                await redeem (bond, sender, receiptAddress , web3 , privateKey, nonce, maxpriority)
+                await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, count, maxpriority, privateKey, inputBaseFeePerGas)
                 nonce ++
                 console.log(`account ${item} : ${bond} redeemed`);
             } else {
                 var checkClaimableResult = await checkClaimable(bond,receiptAddress, web3)
                 if(checkClaimableResult){
                     console.log(`account ${item} : start to claim ${bond}`);
-                    await redeem (bond, sender, receiptAddress , web3 , privateKey, nonce, maxpriority)
+                    await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, count, maxpriority, privateKey, inputBaseFeePerGas)
                     nonce ++
                     console.log(`account ${item} : ${bond} redeemed`);
                 } else {
@@ -158,49 +171,55 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
             }}
 
     }
-    process.exit(1)
+
+    // process.exit(1)
 }
 
 
 const job = async (key) => {
-    
-    const {lowgas: inputBaseFeePerGas, maxpriority} = commandLineArgs(optionDefinitions)
-    // { force: true, maxpriority: 3, lowgas: 2 }
+
+    const {lowgas: inputBaseFeePerGas} = commandLineArgs(optionDefinitions)
 
     console.log('1',inputBaseFeePerGas);
-    console.log('2',maxpriority);
     const data = JSON.parse(readFileSync('./src/claimJob/bondsToClaim.json'))
     const provider = connectToProvider(key)
     const web3 = new Web3(provider)
     const [sender, _] = await web3.eth.getAccounts()
     const count = await web3.eth.getTransactionCount(sender)
 
-
     var algorithm = 'aes256';
     var decipher = crypto.createDecipher(algorithm, key);
-    var privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
+    var privateKey = myWallet['encryptedPrivateKey']
+    if(inputBaseFeePerGas){
+        console.log('ttttttttttttttt');
+        privateKey = myWallet['lowGas']['encryptedPrivateKey']
+    }
+    privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
     privateKey = Buffer.from(privateKey, 'hex')
 
-    if (inputBaseFeePerGas){
-        while(true){
-            var block = await web3.eth.getBlock('latest')
-            var baseFeePerGas = block.baseFeePerGas
-            console.log('3',baseFeePerGas);
-            console.log(inputBaseFeePerGas * Math.pow(10,9));
-            if(inputBaseFeePerGas * Math.pow(10,9) >= baseFeePerGas ){
-                console.log('4');
-                await checkBalance(data, web3, sender, count, maxpriority)
-                await claim(sender, web3 , data, count, privateKey )
-            }else{
-                console.log('5');
-                await delay(15*1000)
-            }
-        }
-    } else {
-        console.log('6');
-        await checkBalance(data, web3, sender, count, maxpriority)
-        await claim(sender, web3 , data, count, privateKey )
-    } 
+    await checkBalance(data, web3, sender, count)
+    await claim(sender, web3 , data, count, privateKey )
+
+    // if (inputBaseFeePerGas){
+    //     while(true){
+    //         var block = await web3.eth.getBlock('latest')
+    //         var baseFeePerGas = block.baseFeePerGas
+    //         console.log('3',banm,seFeePerGas);
+    //         console.log(inputBaseFeePerGas * Math.pow(10,9));
+    //         if(inputBaseFeePerGas * Math.pow(10,9) >= baseFeePerGas ){
+    //             console.log('4');
+    //             await checkBalance(data, web3, sender, count)
+    //             await claim(sender, web3 , data, count, privateKey )
+    //         }else{
+    //             console.log('5');
+    //             await delay(15*1000)
+    //         }
+    //     }
+    // } else {
+    //     console.log('6');
+    //     await checkBalance(data, web3, sender, count)
+    //     await claim(sender, web3 , data, count, privateKey )
+    // } 
 }
 
 // job()

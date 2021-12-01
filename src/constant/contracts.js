@@ -54,9 +54,9 @@ const contracts = {
         abi: JSON.parse(readFileSync( lpPath + 'SushiSwapPremiaWethLP.json'))
     },
     bonds : {
-        sdt: {
+        xsdt: {
             address : '0x903dE5B04B9878696FfA08bD300Cc06b260fc5C9',
-            abi: JSON.parse(readFileSync(bondsPath + 'StdEth.json'))
+            abi: JSON.parse(readFileSync(bondsPath + 'xsdt.json'))
         },
         angle: {
             address : '0x9e5DBd96fD433D89612F84E4eEd4Cd61a6C50277',
@@ -104,9 +104,13 @@ const contracts = {
             address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
             abi: JSON.parse(readFileSync(tokensPath + 'weth.json'))
         },
-        sdt  : {  
+        xsdt  : {  
             address : '0xac14864ce5a98af3248ffbf549441b04421247d3',
-            abi: JSON.parse(readFileSync(tokensPath + 'Std.json'))
+            abi: JSON.parse(readFileSync(tokensPath + 'xsdt.json'))
+        },
+        sdt  : {  
+            address : '0x73968b9a57c6E53d41345FD57a6E6ae27d6CDB2F',
+            abi: JSON.parse(readFileSync(tokensPath + 'sdt.json'))
         },
         angle: {
             address : '0x31429d1856aD1377A8A0079410B297e1a9e214c2',
