@@ -9,6 +9,14 @@ const contracts = {
         address : '',
         // abi: JSON.parse(readFileSync( abiPath + '.json'))
     },
+    UniswapRouter: {
+        address: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+        abi: JSON.parse(readFileSync( abiPath + 'UniswapRouter.json'))
+    },
+    SushiswapRouter: {
+        address: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
+        abi: JSON.parse(readFileSync( abiPath + 'SushiswapRouter.json'))
+    },
     UniswapEthFoxLP: {
         address: '0x470e8de2eBaef52014A47Cb5E6aF86884947F08c',
         abi: JSON.parse(readFileSync( lpPath + 'UniswapEthFoxLP.json'))
