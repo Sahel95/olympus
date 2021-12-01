@@ -182,14 +182,14 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
 
             if(force){
                 console.log(`account ${item} : start to claim ${bond}`);
-                await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, count, maxpriority, privateKey, inputBaseFeePerGas)
+                await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, nonce, maxpriority, privateKey, inputBaseFeePerGas)
                 nonce ++
                 console.log(`account ${item} : ${bond} redeemed`);
             } else {
                 var checkClaimableResult = await checkClaimable(bond,receiptAddress, web3)
                 if(checkClaimableResult){
                     console.log(`account ${item} : start to claim ${bond}`);
-                    await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, count, maxpriority, privateKey, inputBaseFeePerGas)
+                    await sendTransaction(sender, redeemData, contracts['bonds'][bond]['address'], web3, bond, nonce, maxpriority, privateKey, inputBaseFeePerGas)
                     nonce ++
                     console.log(`account ${item} : ${bond} redeemed`);
                 } else {
