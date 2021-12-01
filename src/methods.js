@@ -18,9 +18,9 @@ const sendTransaction = async (sender, data, contractAddress, web3,bond='', coun
         var count = await web3.eth.getTransactionCount(sender)
     }
 
-    if (maxpriority ===''){
+    if (maxpriority ==='' && inputBaseFeePerGas === ''){
         var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
-    }else if (inputBaseFeePerGas !== ''){
+    }else if (maxpriority ===''  && inputBaseFeePerGas !== ''){
         var maxPriorityFeePerGas = web3.utils.toWei('2.5','gwei')
     } else {
         var maxPriorityFeePerGas = web3.utils.toWei(maxpriority.toString(),'gwei')

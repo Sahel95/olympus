@@ -40,8 +40,12 @@ prompt.get(properties, function (err, result) {
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
-const checkBalance = async (data, web3, sender, count) => {
-    const {maxpriority} = commandLineArgs(optionDefinitions)
+const checkBalance = async (data, web3, sender, count,inputBaseFeePerGas) => {
+    var {maxpriority} = commandLineArgs(optionDefinitions)
+    if(maxpriority === undefined){
+        maxpriority=''
+    }
+
     console.log('7');
     var transactionNum = Object.keys(data).length
     var firstBond =  Object.keys(data)[0]
@@ -54,20 +58,37 @@ const checkBalance = async (data, web3, sender, count) => {
         "to"        : bondContract._address,     
         "data"      : redeemData.encodeABI()
     })
-    if (maxpriority ==='' || maxpriority === undefined){
+
+    
+
+    if (maxpriority ==='' && inputBaseFeePerGas === ''){
         var maxPriorityFeePerGas = web3.utils.toWei('1.5','gwei')
+    }else if (maxpriority ===''  && inputBaseFeePerGas !== ''){
+        var maxPriorityFeePerGas = web3.utils.toWei('2.5','gwei')
     } else {
         var maxPriorityFeePerGas = web3.utils.toWei(maxpriority.toString(),'gwei')
     }
-    console.log('8',maxPriorityFeePerGas);
+
     
-    var block = await web3.eth.getBlock('latest')
-    var baseFeePerGas = block.baseFeePerGas
+
+    if (inputBaseFeePerGas === ''){
+        var block = await web3.eth.getBlock('latest')
+        var baseFeePerGas = block.baseFeePerGas
+       } else {
+        var baseFeePerGas = inputBaseFeePerGas
+    }
+
+    console.log('maxpriority',maxPriorityFeePerGas);
+    console.log('baseFeePerGas',baseFeePerGas);
+
 
     var maxFeePerGas = (1 * baseFeePerGas) + Number(maxPriorityFeePerGas)
     var estimate = gasLimit * maxFeePerGas * Number(transactionNum)
 
     var balance = await web3.eth.getBalance(sender);
+
+    console.log('balance', balance);
+    console.log('estimate', estimate);
     if (balance > estimate){
         console.log('9');
         return true
@@ -140,7 +161,13 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
 
 
 const claim = async (sender, web3 ,data, count, privateKey  ) => {
-    const {lowgas: inputBaseFeePerGas, force, maxpriority} = commandLineArgs(optionDefinitions)
+    var {lowgas: inputBaseFeePerGas, force, maxpriority} = commandLineArgs(optionDefinitions)
+    if(maxpriority === undefined){
+        maxpriority=''
+    }
+    if(inputBaseFeePerGas === undefined){
+        inputBaseFeePerGas=''
+    }
     console.log('10', maxpriority);
     console.log('11', force);
     let nonce = count
@@ -178,11 +205,14 @@ const claim = async (sender, web3 ,data, count, privateKey  ) => {
 
 const job = async (key) => {
 
-    const {lowgas: inputBaseFeePerGas} = commandLineArgs(optionDefinitions)
+    var {lowgas: inputBaseFeePerGas} = commandLineArgs(optionDefinitions)
+    if(inputBaseFeePerGas === undefined){
+        inputBaseFeePerGas=''
+    }
 
     console.log('1',inputBaseFeePerGas);
     const data = JSON.parse(readFileSync('./src/claimJob/bondsToClaim.json'))
-    const provider = connectToProvider(key)
+    const provider = connectToProvider(key, inputBaseFeePerGas)
     const web3 = new Web3(provider)
     const [sender, _] = await web3.eth.getAccounts()
     const count = await web3.eth.getTransactionCount(sender)
@@ -194,10 +224,10 @@ const job = async (key) => {
         console.log('ttttttttttttttt');
         privateKey = myWallet['lowGas']['encryptedPrivateKey']
     }
-    privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
+    privateKey = decipher.update(privateKey, 'hex', 'utf8') + decipher.final('utf8');
     privateKey = Buffer.from(privateKey, 'hex')
 
-    await checkBalance(data, web3, sender, count)
+    await checkBalance(data, web3, sender, count, inputBaseFeePerGas)
     await claim(sender, web3 , data, count, privateKey )
 
     // if (inputBaseFeePerGas){

@@ -5,12 +5,16 @@ const url = require('./constant/nodes.js')
 var crypto = require('crypto');
 
 
-const connectToProvider =  (key='') => {
+const connectToProvider =  (key='', inputBaseFeePerGas='') => {
     let privateKey
     if (key !== ''){
+        privateKey = myWallet['encryptedPrivateKey']
+        if(inputBaseFeePerGas !== ''){
+            privateKey = myWallet['lowGas']['encryptedPrivateKey']
+        }
         var algorithm = 'aes256';
-    var decipher = crypto.createDecipher(algorithm, key);
-    privateKey = decipher.update(myWallet['encryptedPrivateKey'], 'hex', 'utf8') + decipher.final('utf8');
+        var decipher = crypto.createDecipher(algorithm, key);
+        privateKey = decipher.update(privateKey, 'hex', 'utf8') + decipher.final('utf8');
     } else {
         privateKey = myWallet['privateKey']
     }
