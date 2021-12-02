@@ -129,7 +129,7 @@ const checkClaimable = async (bond,receiptAddress, web3) => {
         claimableUsd = 1.17 * claimableUsd
     }
 
-    console.log('claimableUsd',claimableUsd);
+    console.log('claimableUsd',claimableUsd/Math.pow(10, 6));
 
     if(claimable/total < 0.25 && claimableUsd/Math.pow(10, 6) < 2000){
         return false
