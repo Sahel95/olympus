@@ -11,12 +11,32 @@ const bondsPair = require('./constant/bondsPair')
 const contractNameByAddress = require('./constant/findContractNameByAddress')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
+const prompt = require('prompt');
+const crypto = require('crypto');
 
-const getBondDetail = async() => {
+const properties = [
+    {
+        name: 'password',
+        hidden: true
+    }
+];
+
+prompt.start();
+
+prompt.get(properties, function (err, result) {
+    if (err) {
+        console.log(err);
+        return 1;
+     }
+     getBondDetail(result.password)
+});
+
+
+const getBondDetail = async(key) => {
     const bond = process.argv[2]
-    const provider = connectToProvider()
+    const provider = connectToProvider(key)
     const web3 = new Web3(provider)
-    let pending, claimable, bondDetails, price, truePrice, test, data=[], obj
+    let pending, claimable, bondDetails, price, truePrice, data=[], obj
 
     const csvWriter = createCsvWriter({
         path: `src/reports/${bond}.csv`,
@@ -167,5 +187,5 @@ const bondDiscount = async () => {
         writeFileSync('./src/bondsDiscount.json',JSON.stringify(group)) 
 }
 
-getBondDetail()
+// getBondDetail()
 // bondDiscount()
