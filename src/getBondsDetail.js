@@ -9,25 +9,53 @@ const abiDecoder = require('abi-decoder');
 const bondsPair = require('./constant/bondsPair')
 
 const contractNameByAddress = require('./constant/findContractNameByAddress')
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 
-
-const getBondDetail = async(bond, account) => {
+const getBondDetail = async() => {
+    const bond = process.argv[2]
     const provider = connectToProvider()
     const web3 = new Web3(provider)
-    let total, matured, bondDetails, price, truePrice, test
+    let pending, claimable, bondDetails, price, truePrice, test, data=[], obj
+
+    const csvWriter = createCsvWriter({
+        path: `src/reports/${bond}.csv`,
+        header: [
+            {id: 'account', title: 'account'},
+            {id: 'bond', title: 'bond'},
+            {id: 'claimable', title: 'claimable'},
+            {id: 'pending', title: 'pending'},
+        ]
+    });
 
     const bondContract = subscribeToContract(bond, web3, 'bonds')
 
+    for (const [key, account] of Object.entries(accounts) ) {
     bondDetails = await bondContract.methods.bondInfo(account).call();
-    total = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
-    matured = await bondContract.methods.pendingPayoutFor(account).call();
-    matured = web3.utils.fromWei(matured, 'gwei')
+    // console.log('bondDetails', bondDetails.payout);
+    // pending = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
+    pending = bondDetails.payout.toString()
+    claimable = await bondContract.methods.pendingPayoutFor(account).call();
+    // console.log('claimable', claimable);
+    // claimable = web3.utils.fromWei(claimable, 'gwei')
 
-    price = await bondContract.methods.bondPrice().call()
-    truePrice = await bondContract.methods.trueBondPrice().call()
+    // console.log(pending,'::::::::',claimable);
 
-    console.log(bondDetails ,total, matured, price, truePrice);
+    obj = {
+        account: key,
+        bond: bond,
+        claimable: claimable,
+        pending: pending
+    }
+    data.push(obj)
+    // price = await bondContract.methods.bondPrice().call()
+    // truePrice = await bondContract.methods.trueBondPrice().call()
+    }
+
+    await csvWriter.writeRecords(data)
+    // .then(()=> console.log('The CSV file was written successfully'));
+    console.log('The CSV file was written successfully')
+    process.exit()
 }
 
 
@@ -70,12 +98,13 @@ const bondDiscount = async () => {
     const body = await response.json()
 
     for await (const [index, tx] of body.result.entries()) {
-        console.log(index);
+        console.log(tx);
         if (bondsAddress.includes(tx['to'])){
             var bond = contractNameByAddress[tx['to']]
             var abi = contracts['bonds'][bond]['abi']
             abiDecoder.addABI(abi)
             var inputData = abiDecoder.decodeMethod(tx['input']);
+            console.log(inputData);
             
             if(inputData.name === 'deposit'){
                 var obj={}
@@ -138,5 +167,5 @@ const bondDiscount = async () => {
         writeFileSync('./src/bondsDiscount.json',JSON.stringify(group)) 
 }
 
-getBondDetail('bond', accounts[1])
+getBondDetail()
 // bondDiscount()

@@ -12,10 +12,12 @@
     "@truffle/hdwallet-provider": "^1.7.0",
     "abi-decoder": "^2.4.0",
     "command-line-args": "^5.2.0",
+    "csv-writer": "^1.6.0",
     "ethereumjs-tx": "^2.1.2",
     "node-fetch": "^2.6.6",
     "nodemon": "^2.0.15",
     "prompt": "^1.2.0",
+    "selenium-webdriver": "^4.1.0",
     "web3": "^1.6.1"
   }
 }

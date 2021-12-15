@@ -97,7 +97,114 @@ const contracts = {
         inv: {
             address: '0x34eB308C932fe3BbdA8716a1774eF01d302759D9',
             abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
-        }
+        },
+        weth_alcx: {
+            address: '0x6D987Dda4358a9Ba4F695Ca4e6AA3933D7Bc1B08',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        alcxEth: {
+            address: '0x1e5b7412f4B4B713b93D0e82260BD27810984B6e',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        dai: {
+            address: '0x105cD312418311dd49Bc1e88459019Ed4eF218DC',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        bankEth1: {
+            address: '0xC9CE759C809E8026C8Fc1b66536031d81d6c3d1C',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        fraxWeth: {
+            address: '0xD35509ab8fC94c81fDc8c26ABe4fc581741C0C8A',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        pandleEth: {
+            address: '0x11Ac5C608C6b2C57ED58ee43281F7ba52205b17a',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        groPwrd: {
+            address: '0x202a5F109802334B7ADa438f22481D22806E2783',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        bankEth2: {
+            address: '0x1e5924A216eD739FCFE681FD8784f9AE2430Ba22',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        iqEth: {
+            address: '0x652775a0331d495F3539C4690C9aB392F220ccaa',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        divineEth: {
+            address: '0xe187C0d652277230c507A62786A5124dd636E3D8',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        bottoEth: {
+            address: '0x0Dc91da5fA5F2d6B3f84e966cd1Ea86cA1250C5A',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        bptEth: {
+            address: '0x93de01EbCCEdf8bB40CaEa0C4BD8BB4b5dc1F56B',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        weth_bpt: {
+            address: '0x0A1f162AcFcDc8d0696a6716AF0dDc0aDDb3664c',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'KP3R-ETH': {
+            address: '0x886fC242Af5BF90E839d8B4817748e184cBa7D97',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibAUD': {
+            address: '0x4785Ae4aCfE79CdaF37aCf39300fe0b5f7FD0173',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibCHF': {
+            address: '0xCf21b29de6f3088689Db33DC44fCeB155E6b38d7',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibEUR': {
+            address: '0x9BFb385c1aDB607a427183Bd3eB7dc687f639F26',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibGBP': {
+            address: '0x38C10BCb6f4DDc16C676bC164e8C665C431D3e60',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibJPY': {
+            address: '0x3C0BFa27DF3f71860ADe71c4f3c88Bd02B8DFE05',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USDC-ibKRW': {
+            address: '0xCFc5Cd985DEa7382258697c6E41cc6E1cA9b821c',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'oneUNI-ICHI': {
+            address: '0x56db5d12a2438bFD258bc72CBA45206c11D33239',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'THOR-ETH': {
+            address: '0xee8911D69d5a49aeC8B17419D7C8Cb5A08b449Ba',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'RUNE-ETH': {
+            address: '0xf7092a510f154FfF7F90d18d3a053b08B7c7e417',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'RUNE': {
+            address: '0x3Ea7eBDcf8Ce93903420e5db4036d0899564cE5E',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'USF-ETH': {
+            address: '0xCBC2E3e10475A1BDe447D2B67e6C302b07542e5d',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        'QUARTZ-USDC': {
+            address: '0x871eECEFE9c1AA35b9f2AfED48a5f5fA696eb4F0',
+            abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
+        },
+        
+
+        
     },
     tokens: {
         weth:{
