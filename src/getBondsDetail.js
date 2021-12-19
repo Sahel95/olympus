@@ -7,35 +7,18 @@ const subscribeToContract = require('./subscribeToContract')
 const fetch = require('node-fetch');
 const abiDecoder = require('abi-decoder');
 const bondsPair = require('./constant/bondsPair')
+const url = require('./constant/nodes.js')
+
 
 const contractNameByAddress = require('./constant/findContractNameByAddress')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-const prompt = require('prompt');
-const crypto = require('crypto');
-
-const properties = [
-    {
-        name: 'password',
-        hidden: true
-    }
-];
-
-prompt.start();
-
-prompt.get(properties, function (err, result) {
-    if (err) {
-        console.log(err);
-        return 1;
-     }
-     getBondDetail(result.password)
-});
+const Contract = require('web3-eth-contract');
 
 
-const getBondDetail = async(key) => {
+const getBondDetail = async() => {
+    
     const bond = process.argv[2]
-    const provider = connectToProvider(key)
-    const web3 = new Web3(provider)
     let pending, claimable, bondDetails, price, truePrice, data=[], obj
 
     const csvWriter = createCsvWriter({
@@ -48,18 +31,17 @@ const getBondDetail = async(key) => {
         ]
     });
 
-    const bondContract = subscribeToContract(bond, web3, 'bonds')
+    Contract.setProvider(url);
+
+    const bondContract = new Contract(
+        contracts['bonds'][bond]['abi'],
+        contracts['bonds'][bond]['address']
+    );
 
     for (const [key, account] of Object.entries(accounts) ) {
     bondDetails = await bondContract.methods.bondInfo(account).call();
-    // console.log('bondDetails', bondDetails.payout);
-    // pending = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
     pending = bondDetails.payout.toString()
     claimable = await bondContract.methods.pendingPayoutFor(account).call();
-    // console.log('claimable', claimable);
-    // claimable = web3.utils.fromWei(claimable, 'gwei')
-
-    // console.log(pending,'::::::::',claimable);
 
     obj = {
         account: key,
@@ -73,7 +55,6 @@ const getBondDetail = async(key) => {
     }
 
     await csvWriter.writeRecords(data)
-    // .then(()=> console.log('The CSV file was written successfully'));
     console.log('The CSV file was written successfully')
     process.exit()
 }
@@ -187,5 +168,5 @@ const bondDiscount = async () => {
         writeFileSync('./src/bondsDiscount.json',JSON.stringify(group)) 
 }
 
-// getBondDetail()
+getBondDetail()
 // bondDiscount()
