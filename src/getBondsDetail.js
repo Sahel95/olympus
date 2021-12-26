@@ -17,12 +17,46 @@ const Contract = require('web3-eth-contract');
 
 
 const getBondDetail = async() => {
-    
+    const num = process.argv.length
     const bond = process.argv[2]
-    let pending, claimable, bondDetails, price, truePrice, data=[], obj
+    let pending, claimable, bondDetails, price, truePrice, data=[], obj, path
+
+    if (num === 3){
+        path = `src/reports/${bond}.csv`
+    } else {
+        path = 'src/reports/output.csv'
+    }
+
+    for (let i = 2; i < num; i++) {
+        const bond = process.argv[i]
+        console.log(bond);
+      
+        Contract.setProvider(url);
+
+        const bondContract = new Contract(
+            contracts['bonds'][bond]['abi'],
+            contracts['bonds'][bond]['address']
+        );
+
+        for (const [key, account] of Object.entries(accounts) ) {
+        bondDetails = await bondContract.methods.bondInfo(account).call();
+        pending = bondDetails.payout.toString()
+        claimable = await bondContract.methods.pendingPayoutFor(account).call();
+
+        obj = {
+            account: key,
+            bond: bond,
+            claimable: claimable,
+            pending: pending
+        }
+        data.push(obj)
+        // price = await bondContract.methods.bondPrice().call()
+        // truePrice = await bondContract.methods.trueBondPrice().call()
+        }
+    }
 
     const csvWriter = createCsvWriter({
-        path: `src/reports/${bond}.csv`,
+        path: path,
         header: [
             {id: 'account', title: 'account'},
             {id: 'bond', title: 'bond'},
@@ -30,29 +64,6 @@ const getBondDetail = async() => {
             {id: 'pending', title: 'pending'},
         ]
     });
-
-    Contract.setProvider(url);
-
-    const bondContract = new Contract(
-        contracts['bonds'][bond]['abi'],
-        contracts['bonds'][bond]['address']
-    );
-
-    for (const [key, account] of Object.entries(accounts) ) {
-    bondDetails = await bondContract.methods.bondInfo(account).call();
-    pending = bondDetails.payout.toString()
-    claimable = await bondContract.methods.pendingPayoutFor(account).call();
-
-    obj = {
-        account: key,
-        bond: bond,
-        claimable: claimable,
-        pending: pending
-    }
-    data.push(obj)
-    // price = await bondContract.methods.bondPrice().call()
-    // truePrice = await bondContract.methods.trueBondPrice().call()
-    }
 
     await csvWriter.writeRecords(data)
     console.log('The CSV file was written successfully')

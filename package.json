@@ -17,7 +17,6 @@
     "node-fetch": "^2.6.6",
     "nodemon": "^2.0.15",
     "prompt": "^1.2.0",
-    "selenium-webdriver": "^4.1.0",
     "web3": "^1.6.1"
   }
 }
