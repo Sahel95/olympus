@@ -3,7 +3,7 @@ temp
 src/claimJob/bondsToClaim.json
 src/constant/accounts.js
 src/constant/nodes.js
-src/report
+src/reports
 
 # Logs
 logs
