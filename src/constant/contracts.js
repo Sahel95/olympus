@@ -118,7 +118,7 @@ const contracts = {
             address: '0xD35509ab8fC94c81fDc8c26ABe4fc581741C0C8A',
             abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
         },
-        pandleEth: {
+        pandle: {
             address: '0x11Ac5C608C6b2C57ED58ee43281F7ba52205b17a',
             abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
         },
@@ -174,7 +174,7 @@ const contracts = {
             address: '0x886fC242Af5BF90E839d8B4817748e184cBa7D97',
             abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
         },
-        'oneUNI-ICHI': {
+        ichi: {
             address: '0x56db5d12a2438bFD258bc72CBA45206c11D33239',
             abi: JSON.parse(readFileSync(bondsPath + 'inv.json'))
         },
@@ -253,6 +253,10 @@ const contracts = {
         mta: {
             address : '0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2',
             abi: JSON.parse(readFileSync(tokensPath + 'mta.json'))
+        },
+        ichi: {
+            address : '0x903bEF1736CDdf2A537176cf3C64579C3867A881',
+            abi: JSON.parse(readFileSync(tokensPath + 'ichi.json'))
         },
         usd: {
             address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',

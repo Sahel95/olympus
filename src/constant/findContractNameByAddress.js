@@ -9,7 +9,8 @@ const contractsName = {
     '0x270689eeefac9015ea8ea3c1c082f91af2a7f77c': 'fox',
     '0x89c4993e8a96e70bb507b31b38fd6addf995394c': 'syn',
     '0x100d4127e19396b117ff6ad47d2186f76f7fa50a': 'premia',
-    '0xa8e5fa0072d292646d49999ef0d7f9354ec8e7a5': 'mta'
+    '0xa8e5fa0072d292646d49999ef0d7f9354ec8e7a5': 'mta',
+    '0x56db5d12a2438bFD258bc72CBA45206c11D33239': 'ichi'
 }
 
 module.exports = contractsName
